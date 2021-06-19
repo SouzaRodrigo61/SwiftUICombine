@@ -9,34 +9,44 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @State private var showCertificates: Bool = false
     @State private var contentOffset = CGFloat(0)
     
     var content: some View {
         VStack {
-            NavigationLink(destination: FAQView()) {
-                MenuRow()
+            ProfileRow()
+                .onTapGesture {
+                    showCertificates.toggle()
+                }
+            
+            VStack {
+                NavigationLink(destination: FAQView()) {
+                    MenuRow()
+                }
+                
+                divider
+                
+                NavigationLink(destination: PackagesView()) {
+                    MenuRow(title: "SwiftUI Packages", leftIcon: "square.stack.3d.up.fill")
+                }
+                
+                divider
+                
+                Link(destination: URL(string: "https://www.youtube.com/channel/UCTIhfOopxukTIRkbXJ3kN-g")!, label: {
+                    MenuRow(title: "YouTube Channel", leftIcon: "play.rectangle.fill", rightIcon: "link")
+                })
             }
-            
-            divider
-            
-            NavigationLink(destination: PackagesView()) {
-                MenuRow(title: "SwiftUI Packages", leftIcon: "square.stack.3d.up.fill")
-            }
-            
-            divider
-            
-            Link(destination: URL(string: "https://www.youtube.com/channel/UCTIhfOopxukTIRkbXJ3kN-g")!, label: {
-                MenuRow(title: "YouTube Channel", leftIcon: "play.rectangle.fill", rightIcon: "link")
-            })
+            .blurBackground()
+            .padding(.top, 20)
         }
-
-        .padding(16)
-        .background(Color("Background 1"))
-        .background(VisualEffectBlur(blurStyle: .systemUltraThinMaterialDark))
-        .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), lineWidth: 1).blendMode(.overlay))
-        .mask(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .foregroundColor(Color.white)
         .padding(.top, 20)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 10)
+        .sheet(isPresented: $showCertificates, content: {
+                CertificatesView()
+        })
     }
     
     var divider: some View {
@@ -74,11 +84,17 @@ struct ContentView: View {
             .navigationBarHidden(true)
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .accentColor(colorScheme == .dark ? .white : Color(#colorLiteral(red: 0.1764705926, green: 0.01176470611, blue: 0.5607843399, alpha: 1)))
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        Group {
+            ContentView()
+                .preferredColorScheme(.light)
+            ContentView()
+                .preferredColorScheme(.dark)
+        }
     }
 }
